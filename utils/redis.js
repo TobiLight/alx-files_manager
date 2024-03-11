@@ -13,16 +13,17 @@ class RedisClient {
    */
   constructor() {
     this.client = createClient();
-    this.isConnected = true;
+    this.clientConnected = false;
 
     this.client.on('error', (err) => {
       console.log(`Redis Client Error: ${err.message || err.toString()}`);
-      this.isConnected = false;
+      this.clientConnected = false;
     });
 
     this.client.on('connect', () => {
-      this.isConnected = true;
+      this.clientConnected = true;
     });
+    this.clientConnected = true;
   }
 
   /**
@@ -31,7 +32,7 @@ class RedisClient {
    * @returns {Boolean} - true if connected, otherwise false.
    */
   isAlive() {
-    return this.isConnected;
+    return this.clientConnected;
   }
 
   /**
@@ -42,7 +43,7 @@ class RedisClient {
    * retrieved value (string) or null if not found.
    */
   async get(key) {
-    return promisify(this.client.GET).bind(this.client)(key);
+    return promisify(this.client.get).bind(this.client)(key);
   }
 
   /**
@@ -54,7 +55,7 @@ class RedisClient {
    * @returns {Promise<boolean>} A promise that resolves to true if successful, false otherwise.
    */
   async set(key, value, duration) {
-    await promisify(this.client.SETEX).bind(this.client)(key, value, duration);
+    await promisify(this.client.set).bind(this.client)(key, value, "EX", duration);
   }
 
   /**
