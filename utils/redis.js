@@ -13,17 +13,18 @@ class RedisClient {
    */
   constructor() {
     this.client = createClient();
-    this.clientConnected = false;
 
     this.client.on('error', (err) => {
       console.log(`Redis Client Error: ${err.message || err.toString()}`);
-      this.clientConnected = false;
+      // this.clientConnected = false;
     });
+
+    this.clientConnected = false;
 
     this.client.on('connect', () => {
       this.clientConnected = true;
     });
-    this.clientConnected = true;
+    // this.clientConnected = true;
   }
 
   /**
