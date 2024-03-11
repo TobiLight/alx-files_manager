@@ -40,7 +40,8 @@ class DBClient {
    */
   async nbUsers() {
     // await this.client.connect();
-    return await this.client.connect().db(this.database).collection('users').countDocuments();
+    const dbClient = await this.client.connect();
+    return dbClient.db(this.database).collection('users').countDocuments();
   }
 
   /**
@@ -51,7 +52,8 @@ class DBClient {
    */
   async nbFiles() {
     // await this.client.connect();
-    return await this.client.connect().db(this.database).collection('files').countDocuments();
+    const dbClient = await this.client.connect();
+    return dbClient.db(this.database).collection('files').countDocuments();
   }
 }
 
