@@ -11,7 +11,7 @@ class RedisClient {
   /**
    * Creates a new Redis client instance.
    */
-  constructor () {
+  constructor() {
     this.client = createClient();
 
     this.client.on('error', (err) => {
@@ -32,7 +32,7 @@ class RedisClient {
    *
    * @returns {Boolean} - true if connected, otherwise false.
    */
-  isAlive () {
+  isAlive() {
     return this.clientConnected;
   }
 
@@ -43,7 +43,7 @@ class RedisClient {
    * @returns {Promise<string|object|null>} A promise that resolves to the
    * retrieved value (string) or null if not found.
    */
-  async get (key) {
+  async get(key) {
     return promisify(this.client.get).bind(this.client)(key);
   }
 
@@ -55,7 +55,7 @@ class RedisClient {
    * @param {number} duration - The expiration time in seconds for the key-value pair.
    * @returns {Promise<boolean>} A promise that resolves to true if successful, false otherwise.
    */
-  async set (key, value, duration) {
+  async set(key, value, duration) {
     await promisify(this.client.set).bind(this.client)(key, value, 'EX', duration);
   }
 
@@ -66,7 +66,7 @@ class RedisClient {
    * @returns {Promise<boolean>} A promise that resolves to true if removed
    * successfully, false otherwise.
    */
-  async del (key) {
+  async del(key) {
     await promisify(this.client.DEL).bind(this.client)(key);
   }
 }
