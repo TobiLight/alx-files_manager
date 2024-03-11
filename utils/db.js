@@ -39,7 +39,6 @@ class DBClient {
    * documents (integer).
    */
   async nbUsers() {
-    // await this.client.connect();
     const dbClient = await this.client.connect();
     return dbClient.db(this.database).collection('users').countDocuments();
   }
@@ -51,11 +50,10 @@ class DBClient {
    * documents (integer).
    */
   async nbFiles() {
-    // await this.client.connect();
     const dbClient = await this.client.connect();
     return dbClient.db(this.database).collection('files').countDocuments();
   }
 }
 
-const dbClient = new DBClient();
-module.exports = dbClient;
+export const dbClient = new DBClient();
+export default dbClient;
