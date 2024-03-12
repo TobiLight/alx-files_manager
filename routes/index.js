@@ -7,4 +7,5 @@ const router = Router();
 router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
 
-export { router };
+export const AppRouter = router;
+module.exports = AppRouter;

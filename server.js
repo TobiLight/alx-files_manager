@@ -5,7 +5,7 @@
  */
 
 import express from 'express';
-import { router as AppRouter } from './routes/index';
+import { AppRouter } from './routes/index';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
