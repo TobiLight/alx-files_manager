@@ -25,13 +25,10 @@ export const getStats = async (req, res) => {
   const users = await dbClient.nbUsers();
   const files = await dbClient.nbFiles();
 
-  console.log(users);
-
   res.status(200).json({
     users,
     files,
   });
-  res.end();
 };
 
 module.exports = { getStats, getStatus };
