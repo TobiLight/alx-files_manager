@@ -4,7 +4,7 @@
  * File: redis.js
  */
 
-import { MongoClient } from 'mongodb';
+const { MongoClient } = require('mongodb');
 
 class DBClient {
   /**
@@ -12,10 +12,12 @@ class DBClient {
    */
   constructor() {
     const host = process.env.DB_HOST || 'localhost';
-    const port = process.env.DB_PORT || 27017;
+    const port = process.env.DB_PORT || '27017';
     this.database = process.env.DB_DATABASE || 'files_manager';
-    const url = `mongodb://${host}:${port / ALX`;
+    const url = `mongodb://${host}:${port}`;
+
     this.client = new MongoClient(url, { useUnifiedTopology: true });
+
     this.clientConnected = false;
 
     this.client.connect().then(() => {
@@ -39,8 +41,9 @@ class DBClient {
    * documents (integer).
    */
   async nbUsers() {
-    const dbClient = await this.client.connect();
-    return dbClient.db(this.database).collection('users').countDocuments();
+    return new Promise((resolve, _reject) => {
+      resolve(this.client.db(this.database).collection('users').countDocuments());
+    });
   }
 
   /**
@@ -50,8 +53,9 @@ class DBClient {
    * documents (integer).
    */
   async nbFiles() {
-    const dbClient = await this.client.connect();
-    return dbClient.db(this.database).collection('files').countDocuments();
+    return new Promise((resolve, _reject) => {
+      resolve(this.client.db(this.database).collection('files').countDocuments());
+    });
   }
 }
 

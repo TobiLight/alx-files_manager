@@ -9,11 +9,9 @@ import { redisClient } from '../utils/redis';
  * @param {object} res - The Express response object.
  */
 export const getStatus = (req, res) => {
-  if (redisClient.isAlive() && dbClient.isAlive()) {
     res.status(200).json({
       redis: redisClient.isAlive(), db: dbClient.isAlive(),
     });
-  }
 };
 
 /**
@@ -26,6 +24,8 @@ export const getStatus = (req, res) => {
 export const getStats = async (req, res) => {
   const users = await dbClient.nbUsers();
   const files = await dbClient.nbFiles();
+
+  console.log(users);
 
   res.status(200).json({
     users,
