@@ -9,9 +9,9 @@ import { redisClient } from '../utils/redis';
  * @param {object} res - The Express response object.
  */
 export const getStatus = (req, res) => {
-    res.status(200).json({
-      redis: redisClient.isAlive(), db: dbClient.isAlive(),
-    });
+  res.status(200).json({
+    redis: redisClient.isAlive(), db: dbClient.isAlive(),
+  });
 };
 
 /**
