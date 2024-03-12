@@ -42,7 +42,7 @@ export const AuthController = {
 
   /**
    * Handles the GET /disconnect endpoint that signs out a user
-   * 
+   *
    * @param {Express.Request} req - The Express request object.
    * @param {Express.Response} res - The Express response object.
    *
