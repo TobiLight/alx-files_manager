@@ -8,4 +8,4 @@ router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
 
 export const AppRouter = router;
-module.exports = AppRouter;
+export default AppRouter;
