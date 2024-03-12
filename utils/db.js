@@ -41,9 +41,10 @@ class DBClient {
    * documents (integer).
    */
   async nbUsers() {
-    return new Promise((resolve, _reject) => {
-      resolve(this.client.db(this.database).collection('users').countDocuments());
-    });
+    // return new Promise((resolve, _reject) => {
+    //   resolve(this.client.db(this.database).collection('users').countDocuments());
+    // });
+    return this.client.db(this.database).collection('users').countDocuments();
   }
 
   /**
@@ -53,9 +54,10 @@ class DBClient {
    * documents (integer).
    */
   async nbFiles() {
-    return new Promise((resolve, _reject) => {
-      resolve(this.client.db(this.database).collection('files').countDocuments());
-    });
+    // return new Promise((resolve, _reject) => {
+    //   resolve(this.client.db(this.database).collection('files').countDocuments());
+    // });
+    return this.client.db(this.database).collection('files').countDocuments();
   }
 }
 
