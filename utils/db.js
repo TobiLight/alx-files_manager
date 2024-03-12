@@ -5,7 +5,7 @@
  */
 
 const { MongoClient } = require('mongodb');
-const { hashPassword } = require("./utils")
+const { hashPassword } = require('./utils');
 
 class DBClient {
   /**
@@ -23,7 +23,7 @@ class DBClient {
 
     this.client.connect().then(() => {
       this.clientConnected = true;
-    }).catch((err) => console.log(err.message || err.toString()))
+    }).catch((err) => console.log(err.message || err.toString()));
   }
 
   /**
@@ -65,36 +65,37 @@ class DBClient {
 
   /**
    * Asynchronously retrieves a user from the database.
-   * 
+   *
    * @param {String} email - User email
    * @returns {Promise<object|null>} Returns a user
    */
   async getUser(email) {
-    return await this.client.db(this.database).collection('users')
-      .findOne({ email })
+    const user = await this.client.db(this.database).collection('users')
+      .findOne({ email });
+
+    return user;
   }
 
   /**
    * Asynchronously checks if a user exists or not
-   * 
-   * @param {String} email 
+   *
+   * @param {String} email
    * @returns {Promise<Boolean>} True if user exists, otherwise false
    */
   async userExists(email) {
     const user = await this.getUser(email);
 
-    if (!user)
-      return false;
+    if (!user) return false;
 
     return true;
   }
 
   /**
    * Asynchronously creates a new user
-   * 
+   *
    * @param {String} email - The email of the user
    * @param {String} password - The password of the user
-   * 
+   *
    * @returns {Promise<object>} - The created user
    */
   async createUser(email, password) {
@@ -103,7 +104,6 @@ class DBClient {
 
     return user;
   }
-
 }
 
 export const dbClient = new DBClient();
