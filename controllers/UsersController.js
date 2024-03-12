@@ -1,11 +1,14 @@
 import { dbClient } from '../utils/db';
+import { redisClient } from '../utils/redis';
 
 export const UsersController = {
   /**
- * Handles the POST /users endpoint that adds a user to database
- *
- * @param {object} req - The Express request object.
- * @param {object} res - The Express response object.
+   * Handles the POST /users endpoint that adds a user to database
+   *
+   * @param {Express.Request} req - The Express request object.
+   * @param {Express.Response} res - The Express response object.
+   *
+   * @returns {Object} User ID and email
  */
   async postNew(req, res) {
     const { email, password } = req.body;
@@ -22,6 +25,29 @@ export const UsersController = {
     const userID = user.insertedId;
 
     return res.status(201).json({ id: userID, email });
+  },
+  /**
+   * Handles the GET /users/me endpoint that retrieves a user.
+   *
+   * @param {Express.Request} req - The Express request object.
+   * @param {Express.Response} res - The Express response object.
+   *
+   * @returns
+   */
+  async getMe(req, res) {
+    const token = req.headers['x-token'];
+
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+    const userID = await redisClient.get(`auth_${token}`);
+
+    if (!userID) return res.status(401).json({ error: 'Unauthorized' });
+
+    const user = await dbClient.getUserById(userID);
+
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    return res.status(200).json({ id: user._id, email: user.email });
   },
 };
 

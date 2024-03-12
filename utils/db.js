@@ -4,7 +4,7 @@
  * File: redis.js
  */
 
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectID } = require('mongodb');
 const { hashPassword } = require('./utils');
 
 class DBClient {
@@ -64,14 +64,28 @@ class DBClient {
   }
 
   /**
-   * Asynchronously retrieves a user from the database.
+   * Asynchronously retrieves a user by email from the database.
    *
    * @param {String} email - User email
    * @returns {Promise<object|null>} Returns a user
    */
-  async getUser(email) {
+  async getUserByEmail(email) {
     const user = await this.client.db(this.database).collection('users')
       .findOne({ email });
+
+    return user;
+  }
+
+  /**
+   * Asynchronously retrieves a user by ID from the database.
+   *
+   * @param {String} userID - User ID
+   * @returns {Promise<object|null>} Returns a user
+   */
+  async getUserById(userID) {
+    const _id = new ObjectID(userID);
+    const user = await this.client.db(this.database).collection('users')
+      .findOne({ _id });
 
     return user;
   }
@@ -83,7 +97,7 @@ class DBClient {
    * @returns {Promise<Boolean>} True if user exists, otherwise false
    */
   async userExists(email) {
-    const user = await this.getUser(email);
+    const user = await this.getUserByEmail(email);
 
     if (!user) return false;
 
