@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 const AppController = require('../controllers/AppController');
 // const { UserController } = require('../controllers/UserController');
-import { UserController } from "../controllers/UserController";
+import { UserController } from "../controllers/UsersController";
 
 const router = Router();
 
