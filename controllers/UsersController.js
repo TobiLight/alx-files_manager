@@ -1,6 +1,6 @@
 import { dbClient } from "../utils/db";
 
-export const UserController = {
+export const UsersController = {
   /**
  * Handles the POST /users endpoint that adds a user to database
  *
@@ -28,4 +28,4 @@ export const UserController = {
   },
 }
 
-export default UserController;
+export default UsersController;
