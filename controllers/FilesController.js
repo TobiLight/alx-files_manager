@@ -72,7 +72,7 @@ export const FilesController = {
         });
       } catch (err) {
         console.log('error');
-        return res.status(400).json({ error: err.message || err.toString() })
+        return res.status(400).json({ error: err.message || err.toString() });
       }
     }
 
