@@ -67,7 +67,7 @@ export const FilesController = {
           userId: user._id,
           name,
           type,
-          isPublic,
+          isPublic: isPublic || false,
           parentId: parentId || 0,
         });
       } catch (err) {
