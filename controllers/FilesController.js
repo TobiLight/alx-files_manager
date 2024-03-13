@@ -124,7 +124,10 @@ export const FilesController = {
     const { user } = req;
     const { id } = req.params;
     const file = await (await dbClient.getFileCollections())
-      .findOne({ _id: ObjectID(id), userId: ObjectID(user._id) });
+      .findOne({
+        _id: id === '0' ? Buffer.alloc(24, '0').toString('utf-8')
+          : ObjectID(id), userId: ObjectID(user._id)
+      });
 
     if (!file) return res.status(404).json({ error: 'Not found' });
 
@@ -155,7 +158,7 @@ export const FilesController = {
     const files = await (await (await dbClient.getFileCollections()).aggregate([
       {
         $match: {
-          userId: new ObjectID(user._id),
+          userId: user._id,
           parentId: parseInt(parentId) === 0 || parentId.toString() === '0'
             ? parseInt(parentId, 10) : new ObjectID(parentId),
         },
