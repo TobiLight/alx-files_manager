@@ -21,6 +21,8 @@ router.get('/disconnect', xTokenAuthenticate, AuthController.getDisconnect);
 router.post('/files', xTokenAuthenticate, FilesController.postUpload);
 router.get('/files/:id', xTokenAuthenticate, FilesController.getShow);
 router.get('/files', xTokenAuthenticate, FilesController.getIndex);
+router.get('/files/:id/publish', xTokenAuthenticate, FilesController.putPublish);
+router.get('/files/:id/unpublish', xTokenAuthenticate, FilesController.putUnpublish);
 
 export const AppRouter = router;
 export default AppRouter;

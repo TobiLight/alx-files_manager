@@ -205,6 +205,88 @@ export const FilesController = {
 
     return res.status(200).json(files);
   },
+
+  /**
+   * Handles the PUT /files/:id/publish endpoint to make a file public
+   *
+   * @param {Express.Request} req - The Express request object.
+   * @param {Express.Response} res - The Express response object.
+   */
+  putPublish: async (req, res) => {
+    const { user } = req;
+    const { id } = req.params;
+
+    try {
+      ObjectId(id);
+    } catch (err) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    const file = await (await dbClient.getFileCollections())
+      .findOne({
+        _id: id === '0' ? Buffer.alloc(24, '0').toString('utf-8')
+          : ObjectId(id),
+        userId: ObjectId(user._id),
+      });
+
+    if (!file) return res.status(404).json({ error: 'Not found' });
+
+    await (await dbClient.getFileCollections()).updateOne({
+      _id: ObjectId(id), userId: ObjectId(user._id),
+    }, { $set: { isPublic: true } });
+
+    return res.status(200).json({
+      id,
+      userId: user._id.toString(),
+      name: file.name,
+      type: file.type,
+      isPublic: true,
+      parentId: file.parentId === '0'
+        ? 0
+        : file.parentId.toString(),
+    });
+  },
+
+  /**
+   * Handles the PUT /files/:id/unpublish endpoint to make a file private
+   *
+   * @param {Express.Request} req - The Express request object.
+   * @param {Express.Response} res - The Express response object.
+   */
+  putUnpublish: async (req, res) => {
+    const { user } = req;
+    const { id } = req.params;
+
+    try {
+      ObjectId(id);
+    } catch (err) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    const file = await (await dbClient.getFileCollections())
+      .findOne({
+        _id: id === '0' ? Buffer.alloc(24, '0').toString('utf-8')
+          : ObjectId(id),
+        userId: ObjectId(user._id),
+      });
+
+    if (!file) return res.status(404).json({ error: 'Not found' });
+
+    await (await dbClient.getFileCollections()).updateOne({
+      _id: ObjectId(id), userId: ObjectId(user._id),
+    }, { $set: { isPublic: false } });
+
+    return res.status(200).json({
+      id,
+      userId: user._id.toString(),
+      name: file.name,
+      type: file.type,
+      isPublic: false,
+      parentId: file.parentId === '0'
+        ? 0
+        : file.parentId.toString(),
+    });
+  },
 };
 
 export default FilesController;
