@@ -156,7 +156,7 @@ export const FilesController = {
       {
         $match: {
           userId: ObjectID(user._id),
-          parentId: parentId.toString() === '0'
+          parentId: parentId === 0 || parentId.toString() === '0'
             ? parseInt(parentId, 10) : new ObjectID(parentId),
         },
       },
