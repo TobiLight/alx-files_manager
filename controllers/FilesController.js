@@ -126,7 +126,8 @@ export const FilesController = {
     const file = await (await dbClient.getFileCollections())
       .findOne({
         _id: id === '0' ? Buffer.alloc(24, '0').toString('utf-8')
-          : ObjectID(id), userId: ObjectID(user._id)
+          : ObjectID(id),
+        userId: ObjectID(user._id),
       });
 
     if (!file) return res.status(404).json({ error: 'Not found' });
@@ -155,12 +156,39 @@ export const FilesController = {
       ? Number.parseInt(req.query.page, 10)
       : 0;
 
+    if (parentId === '0' || parentId === 0) {
+      const files = await (await (await dbClient.getFileCollections()).aggregate([
+        {
+          $match: {
+            userId: user._id,
+          },
+        },
+        { $sort: { _id: -1 } },
+        { $skip: page * MAX_ITEMS_PER_PAGE },
+        { $limit: MAX_ITEMS_PER_PAGE },
+        {
+          $project: {
+            _id: 0,
+            id: '$_id',
+            userId: '$userId',
+            name: '$name',
+            type: '$type',
+            isPublic: '$isPublic',
+            parentId: {
+              $cond: { if: { $eq: ['$parentId', '0'] }, then: 0, else: '$parentId' },
+            },
+          },
+        },
+      ])).toArray();
+
+      return res.status(200).json(files);
+    }
+
     const files = await (await (await dbClient.getFileCollections()).aggregate([
       {
         $match: {
           userId: user._id,
-          parentId: parseInt(parentId) === 0 || parentId.toString() === '0'
-            ? parseInt(parentId, 10) : new ObjectID(parentId),
+          parentId: new ObjectID(parentId),
         },
       },
       { $sort: { _id: -1 } },
