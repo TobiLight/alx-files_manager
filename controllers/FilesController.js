@@ -57,7 +57,7 @@ export const FilesController = {
         const folder = await dbClient.client.db().collection('files').insertOne({
           name,
           type,
-          isPublic,
+          isPublic: isPublic || false,
           data,
           parentId: new ObjectID(parentId) || 0,
           userId: user._id,
@@ -104,7 +104,7 @@ export const FilesController = {
     const newFile = await dbClient.client.db().collection('files').insertOne({
       name,
       type,
-      isPublic,
+      isPublic: isPublic || false,
       data,
       parentId: new ObjectID(parentId) || 0,
       userId: user._id,
