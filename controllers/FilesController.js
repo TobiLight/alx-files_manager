@@ -15,6 +15,29 @@ const VALID_TYPES = {
 
 const MAX_ITEMS_PER_PAGE = 20;
 
+const isValidId = (id) => {
+  const size = 24;
+  let i = 0;
+  const charRanges = [
+    [48, 57], // 0 - 9
+    [97, 102], // a - f
+    [65, 70], // A - F
+  ];
+  if (typeof id !== 'string' || id.length !== size) {
+    return false;
+  }
+  while (i < size) {
+    const c = id[i];
+    const code = c.charCodeAt(0);
+
+    if (!charRanges.some((range) => code >= range[0] && code <= range[1])) {
+      return false;
+    }
+    i += 1;
+  }
+  return true;
+};
+
 export const FilesController = {
   /**
      * Handles the POST /files endpoint that upload files
@@ -216,15 +239,9 @@ export const FilesController = {
     const { user } = req;
     const { id } = req.params;
 
-    try {
-      ObjectId(id);
-    } catch (err) {
-      return res.status(404).json({ error: 'Not found' });
-    }
-
     const file = await (await dbClient.getFileCollections())
       .findOne({
-        _id: ObjectId(id),
+        _id: ObjectId(isValidId(id) ? id : Buffer.alloc(24, '0').toString('utf-8')),
         userId: ObjectId(user._id),
       });
 
@@ -256,15 +273,9 @@ export const FilesController = {
     const { user } = req;
     const { id } = req.params;
 
-    try {
-      ObjectId(id);
-    } catch (err) {
-      return res.status(404).json({ error: 'Not found' });
-    }
-
     const file = await (await dbClient.getFileCollections())
       .findOne({
-        _id: ObjectId(id),
+        _id: ObjectId(isValidId(id) ? id : Buffer.alloc(24, '0').toString('utf-8')),
         userId: ObjectId(user._id),
       });
 
