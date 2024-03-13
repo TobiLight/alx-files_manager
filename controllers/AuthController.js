@@ -32,7 +32,7 @@ export const AuthController = {
    * @returns {void} Unauthorized, otherwise void
    */
   getDisconnect: async (req, res) => {
-    const token = getXTokenFromHeader('x-token');
+    const token = getXTokenFromHeader(req, 'x-token');
 
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
