@@ -241,7 +241,7 @@ export const FilesController = {
       name: file.name,
       type: file.type,
       isPublic: true,
-      parentId: file.parentId === '0'
+      parentId: file.parentId.toString() === '0'
         ? 0
         : file.parentId.toString(),
     });
@@ -282,7 +282,7 @@ export const FilesController = {
       name: file.name,
       type: file.type,
       isPublic: false,
-      parentId: file.parentId === '0'
+      parentId: file.parentId.toString() === '0'
         ? 0
         : file.parentId.toString(),
     });
