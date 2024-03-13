@@ -5,16 +5,15 @@ import {
 import { join as joinPath } from 'path';
 import { tmpdir } from 'os';
 import { v4 as uuidv4 } from 'uuid';
-import { redisClient } from '../utils/redis';
 import { dbClient } from '../utils/db';
-import { getXTokenFromHeader } from "../utils/auth";
-import { getUserIDFromRedisByToken } from "../utils/utils"
 
 const VALID_TYPES = {
   folder: 'folder',
   file: 'file',
   image: 'image',
 };
+
+const MAX_ITEMS_PER_PAGE = 20;
 
 export const FilesController = {
   /**
@@ -116,22 +115,57 @@ export const FilesController = {
   /**
    * Handles the GET /files/:id endpoint to retrieve the file document based on
    * the ID
-   * 
+   *
    * @param {Express.Request} req - The Express request object.
    * @param {Express.Response} res - The Express response object.
    */
   getShow: async (req, res) => {
     const { user } = req;
+    const { id } = req.params;
+    const file = await (await dbClient.getFileCollections())
+      .findOne({ _id: ObjectID(id), userId: user._id.toString() });
+
+    if (!file) return res.status(404).json({ error: 'Not found' });
+
+    return res.status(200).json({ ...file });
   },
 
   /**
    * Handles the GET /files endpoint to retrieve all users file documents for
    * a specific parentId
-   * 
+   *
    * @param {Express.Request} req - The Express request object.
    * @param {Express.Response} res - The Express response object.
    */
-  getIndex: (req, res) => { }
+  getIndex: async (req, res) => {
+    const { user } = req;
+    const { parentId } = req.query.parentId ? req.query : { parentId: 0 };
+    const page = /\d+/.test((req.query.page || '').toString())
+      ? Number.parseInt(req.query.page, 10)
+      : 0;
+
+    const files = await (await (await dbClient.getFileCollections()).aggregate([
+      { $match: { userId: user._id.toString(), parentId: parentId || 0 } },
+      { $sort: { _id: -1 } },
+      { $skip: page * MAX_ITEMS_PER_PAGE },
+      { $limit: MAX_ITEMS_PER_PAGE },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          userId: '$userId',
+          name: '$name',
+          type: '$type',
+          isPublic: '$isPublic',
+          parentId: {
+            $cond: { if: { $eq: ['$parentId', '0'] }, then: 0, else: '$parentId' },
+          },
+        },
+      },
+    ])).toArray();
+
+    return res.status(200).json(files);
+  },
 };
 
 export default FilesController;

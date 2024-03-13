@@ -1,6 +1,5 @@
-import { hashPassword, getUserIDFromRedisByToken } from "./utils";
-import { dbClient } from "./db"
-import { Request } from "express"
+import { hashPassword, getUserIDFromRedisByToken } from './utils';
+import { dbClient } from './db';
 
 /**
  *
@@ -32,19 +31,19 @@ export const getCredentialsFromAuth = (authorization) => {
 
 /**
  * Retrieves X-Token from header
- * 
+ *
  * @param {String} header - The name of the header
  * @returns {String|undefined} The token set in the header, otherwise undefined
  */
 export const getXTokenFromHeader = (req, header) => {
   const token = req.headers[header];
   return token;
-}
+};
 
 /**
  * Gets a user from authorization header
- * 
- * @param {Request} req 
+ *
+ * @param {Express.Request} req - Express Request object
  * @returns The user, otherwise null
  */
 export const getUserFromAuthorization = async (req) => {
@@ -62,12 +61,13 @@ export const getUserFromAuthorization = async (req) => {
 
   if (user.password !== hashPassword(password)) return null;
 
-  return user
-}
+  return user;
+};
 
 /**
- * 
- * @param {*} req 
+ * Gets user data using X-Token from header.
+ *
+ * @param {Express.Request} req - Express Resuest Object
  * @returns {Promise<User|null>} The user, otherwise null
  */
 export const getUserFromXToken = async (req) => {
@@ -84,6 +84,12 @@ export const getUserFromXToken = async (req) => {
   if (!user) return null;
 
   return user;
-}
+};
 
-module.exports = { getAuthHeader, getCredentialsFromAuth, getXTokenFromHeader, getUserFromAuthorization, getUserFromXToken };
+module.exports = {
+  getAuthHeader,
+  getCredentialsFromAuth,
+  getXTokenFromHeader,
+  getUserFromAuthorization,
+  getUserFromXToken,
+};

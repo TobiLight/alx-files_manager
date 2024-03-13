@@ -1,5 +1,5 @@
 import sha1 from 'sha1';
-import { redisClient } from "./redis"
+import { redisClient } from './redis';
 
 /**
  * Hashes a password
@@ -15,9 +15,8 @@ export const hashPassword = (password) => sha1(password);
  * @returns {Promise<String|null>} The UserID, otherwise null
  */
 export const getUserIDFromRedisByToken = async (token) => {
-	const userID = await redisClient.get(`auth_${token}`);
-	return userID;
-
+  const userID = await redisClient.get(`auth_${token}`);
+  return userID;
 };
 
 module.exports = { hashPassword, getUserIDFromRedisByToken };

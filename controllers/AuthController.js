@@ -1,10 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { dbClient } from '../utils/db';
 import { redisClient } from '../utils/redis';
-import { hashPassword } from '../utils/utils';
-import { getAuthHeader, getCredentialsFromAuth, getXTokenFromHeader } from '../utils/auth';
-import { getUserIDFromRedisByToken } from "../utils/utils"
-
+import { getXTokenFromHeader } from '../utils/auth';
 
 export const AuthController = {
   /**

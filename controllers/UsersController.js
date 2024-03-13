@@ -1,7 +1,4 @@
 import { dbClient } from '../utils/db';
-import { redisClient } from '../utils/redis';
-import { getXTokenFromHeader } from "../utils/auth";
-import { getUserIDFromRedisByToken } from "../utils/utils"
 
 export const UsersController = {
   /**
@@ -28,6 +25,7 @@ export const UsersController = {
 
     return res.status(201).json({ id: userID, email });
   },
+
   /**
    * Handles the GET /users/me endpoint that retrieves a user.
    *

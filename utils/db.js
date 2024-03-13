@@ -120,6 +120,14 @@ class DBClient {
   }
 
   /**
+   *
+   */
+  async getFileCollections() {
+    const files = await this.client.db().collection('files');
+    return files;
+  }
+
+  /**
    * Asynchronously retrieves a file by its id.
    *
    * @param {*} fileID - ID of the file
