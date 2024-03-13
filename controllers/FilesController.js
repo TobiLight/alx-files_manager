@@ -45,7 +45,7 @@ export const FilesController = {
     if (!data && type !== VALID_TYPES.folder) return res.status(400).json({ error: 'Missing data' });
 
     if (parentId && parentId !== 0) {
-      const parent = await dbClient.getFileById(new ObjectID(parentId));
+      const parent = await dbClient.getFileById(ObjectID(parentId));
 
       if (!parent) return res.status(400).json({ error: 'Parent not found' });
 
