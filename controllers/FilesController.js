@@ -123,11 +123,18 @@ export const FilesController = {
     const { user } = req;
     const { id } = req.params;
     const file = await (await dbClient.getFileCollections())
-      .findOne({ _id: ObjectID(id), userId: ObjectID(user._ids) });
+      .findOne({ _id: ObjectID(id), userId: user._id.toString() });
 
     if (!file) return res.status(404).json({ error: 'Not found' });
 
-    return res.status(200).json({ ...file });
+    return res.status(200).json({
+      id: id,
+      userId: user._id.toString(),
+      name: file.name,
+      type: file.type,
+      isPublic: file.isPublic,
+      parentId: file.parentId.toString() === '0' ? 0 : file.parentId.toString()
+    });
   },
 
   /**
@@ -157,7 +164,6 @@ export const FilesController = {
           name: '$name',
           type: '$type',
           isPublic: '$isPublic',
-          localPath: '$localPath',
           parentId: {
             $cond: { if: { $eq: ['$parentId', '0'] }, then: 0, else: '$parentId' },
           },
@@ -165,10 +171,8 @@ export const FilesController = {
       },
     ])).toArray();
 
-    console.log(files.length);
-
     return res.status(200).json(files);
-  },
+  }
 };
 
 export default FilesController;
