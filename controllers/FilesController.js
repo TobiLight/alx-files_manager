@@ -50,7 +50,7 @@ export const FilesController = {
           type,
           isPublic: isPublic || false,
           data,
-          parentId: new ObjectID(parentId) || 0,
+          parentId: parentId ? new ObjectID(parentId) : 0,
           userId: new ObjectID(user._id),
         });
 
@@ -60,7 +60,7 @@ export const FilesController = {
           name,
           type,
           isPublic: isPublic || false,
-          parentId: parentId.toString() || 0,
+          parentId: parentId || 0,
         });
       } catch (err) {
         console.log('error');
@@ -98,7 +98,7 @@ export const FilesController = {
       type,
       isPublic: isPublic || false,
       data,
-      parentId: new ObjectID(parentId) || 0,
+      parentId: parentId ? new ObjectID(parentId) : 0,
       userId: new ObjectID(user._id),
       localPath,
     });
@@ -109,7 +109,7 @@ export const FilesController = {
       name,
       type,
       isPublic: isPublic || false,
-      parentId: parentId.toString() || 0,
+      parentId: parentId || 0,
     });
   },
 
@@ -155,9 +155,9 @@ export const FilesController = {
     const files = await (await (await dbClient.getFileCollections()).aggregate([
       {
         $match: {
-          userId: user._id.toString(),
+          userId: ObjectID(user._id),
           parentId: parentId.toString() === '0'
-            ? parseInt(parentId, 10) : parentId,
+            ? parseInt(parentId, 10) : new ObjectID(parentId),
         },
       },
       { $sort: { _id: -1 } },
