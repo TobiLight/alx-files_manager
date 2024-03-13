@@ -224,8 +224,7 @@ export const FilesController = {
 
     const file = await (await dbClient.getFileCollections())
       .findOne({
-        _id: id === '0' ? Buffer.alloc(24, '0').toString('utf-8')
-          : ObjectId(id),
+        _id: ObjectId(id),
         userId: ObjectId(user._id),
       });
 
@@ -265,8 +264,7 @@ export const FilesController = {
 
     const file = await (await dbClient.getFileCollections())
       .findOne({
-        _id: id === '0' ? Buffer.alloc(24, '0').toString('utf-8')
-          : ObjectId(id),
+        _id: ObjectId(id),
         userId: ObjectId(user._id),
       });
 
