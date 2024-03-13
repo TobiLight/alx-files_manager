@@ -152,7 +152,7 @@ export const FilesController = {
       : 0;
 
     const files = await (await (await dbClient.getFileCollections()).aggregate([
-      { $match: { userId: user._id.toString(), parentId: parentId || 0 } },
+      { $match: { userId: user._id.toString(), parentId } },
       { $sort: { _id: -1 } },
       { $skip: page * MAX_ITEMS_PER_PAGE },
       { $limit: MAX_ITEMS_PER_PAGE },
