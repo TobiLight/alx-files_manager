@@ -50,16 +50,17 @@ export const FilesController = {
           type,
           isPublic: isPublic || false,
           data,
-          parentId: ObjectID(parentId) || 0,
-          userId: ObjectID(user._id),
+          parentId: new ObjectID(parentId) || 0,
+          userId: new ObjectID(user._id),
         });
+
         return res.status(201).json({
           id: folder.insertedId,
           userId: user._id.toString(),
           name,
           type,
           isPublic: isPublic || false,
-          parentId: parentId || 0,
+          parentId: parentId.toString() || 0,
         });
       } catch (err) {
         console.log('error');
@@ -97,8 +98,8 @@ export const FilesController = {
       type,
       isPublic: isPublic || false,
       data,
-      parentId: ObjectID(parentId) || 0,
-      userId: ObjectID(user._id),
+      parentId: new ObjectID(parentId) || 0,
+      userId: new ObjectID(user._id),
       localPath,
     });
 
@@ -108,7 +109,7 @@ export const FilesController = {
       name,
       type,
       isPublic: isPublic || false,
-      parentId: parentId || 0,
+      parentId: parentId.toString() || 0,
     });
   },
 
@@ -123,7 +124,7 @@ export const FilesController = {
     const { user } = req;
     const { id } = req.params;
     const file = await (await dbClient.getFileCollections())
-      .findOne({ _id: ObjectID(id), userId: ObjectID(user._id) });
+      .findOne({ _id: ObjectID(id), userId: user._id.toString() });
 
     if (!file) return res.status(404).json({ error: 'Not found' });
 
