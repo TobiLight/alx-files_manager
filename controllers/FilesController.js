@@ -49,7 +49,7 @@ export const FilesController = {
 
       if (!parent) return res.status(400).json({ error: 'Parent not found' });
 
-      if (parent.type && parent.type !== VALID_TYPES.folder) return res.status(400).json({ error: 'Parent is not a folder' });
+      if (parent.type !== VALID_TYPES.folder) return res.status(400).json({ error: 'Parent is not a folder' });
     }
 
     if (type === VALID_TYPES.folder) {
@@ -59,12 +59,12 @@ export const FilesController = {
           type,
           isPublic: isPublic || false,
           data,
-          parentId: new ObjectID(parentId) || 0,
-          userId: user._id,
+          parentId: parentId || 0,
+          userId: user._id.toString(),
         });
         return res.status(201).json({
           id: folder.insertedId,
-          userId: user._id,
+          userId: user._id.toString(),
           name,
           type,
           isPublic: isPublic || false,
@@ -106,14 +106,14 @@ export const FilesController = {
       type,
       isPublic: isPublic || false,
       data,
-      parentId: new ObjectID(parentId) || 0,
-      userId: user._id,
+      parentId: parentId || 0,
+      userId: user._id.toString(),
       localPath,
     });
 
     return res.status(201).json({
       id: newFile.insertedId,
-      userId: user._id,
+      userId: user._id.toString(),
       name,
       type,
       isPublic: isPublic || false,
