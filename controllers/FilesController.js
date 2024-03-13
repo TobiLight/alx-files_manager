@@ -155,7 +155,7 @@ export const FilesController = {
     const files = await (await (await dbClient.getFileCollections()).aggregate([
       {
         $match: {
-          userId: ObjectID(user._id),
+          userId: new ObjectID(user._id),
           parentId: parentId === 0 || parentId.toString() === '0'
             ? parseInt(parentId, 10) : new ObjectID(parentId),
         },
