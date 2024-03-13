@@ -158,11 +158,7 @@ export const FilesController = {
 
     if (parentId === '0' || parentId === 0) {
       const files = await (await (await dbClient.getFileCollections()).aggregate([
-        {
-          $match: {
-            userId: user._id,
-          },
-        },
+        { $match: { userId: ObjectID(user._id) } },
         { $sort: { _id: -1 } },
         { $skip: page * MAX_ITEMS_PER_PAGE },
         { $limit: MAX_ITEMS_PER_PAGE },
@@ -187,8 +183,8 @@ export const FilesController = {
     const files = await (await (await dbClient.getFileCollections()).aggregate([
       {
         $match: {
-          userId: user._id,
-          parentId: new ObjectID(parentId),
+          userId: ObjectID(user._id),
+          parentId: ObjectID(parentId),
         },
       },
       { $sort: { _id: -1 } },
