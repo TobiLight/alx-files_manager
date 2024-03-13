@@ -50,7 +50,7 @@ export const FilesController = {
           type,
           isPublic: isPublic || false,
           data,
-          parentId: parentId ? new ObjectID(parentId) : 0,
+          parentId: parentId ? new ObjectID(parentId) : '0',
           userId: new ObjectID(user._id),
         });
 
@@ -98,13 +98,13 @@ export const FilesController = {
       type,
       isPublic: isPublic || false,
       data,
-      parentId: parentId ? new ObjectID(parentId) : 0,
+      parentId: parentId ? new ObjectID(parentId) : '0',
       userId: new ObjectID(user._id),
       localPath,
     });
 
     return res.status(201).json({
-      id: newFile.insertedId,
+      id: newFile.insertedId.toString(),
       userId: user._id.toString(),
       name,
       type,
@@ -157,7 +157,7 @@ export const FilesController = {
         $match: {
           userId: new ObjectID(user._id),
           parentId: parseInt(parentId) === 0 || parentId.toString() === '0'
-            ? parseInt(parentId, 10) : new ObjectID(parentId),
+            ? parentId : new ObjectID(parentId),
         },
       },
       { $sort: { _id: -1 } },
