@@ -128,12 +128,12 @@ export const FilesController = {
     if (!file) return res.status(404).json({ error: 'Not found' });
 
     return res.status(200).json({
-      id: id,
+      id,
       userId: user._id.toString(),
       name: file.name,
       type: file.type,
       isPublic: file.isPublic,
-      parentId: file.parentId.toString() === '0' ? 0 : file.parentId.toString()
+      parentId: file.parentId.toString() === '0' ? 0 : file.parentId.toString(),
     });
   },
 
@@ -152,7 +152,13 @@ export const FilesController = {
       : 0;
 
     const files = await (await (await dbClient.getFileCollections()).aggregate([
-      { $match: { userId: user._id.toString(), parentId } },
+      {
+        $match: {
+          userId: user._id.toString(),
+          parentId: parentId.toString() === '0'
+            ? parseInt(parentId, 10) : parentId,
+        },
+      },
       { $sort: { _id: -1 } },
       { $skip: page * MAX_ITEMS_PER_PAGE },
       { $limit: MAX_ITEMS_PER_PAGE },
@@ -172,7 +178,7 @@ export const FilesController = {
     ])).toArray();
 
     return res.status(200).json(files);
-  }
+  },
 };
 
 export default FilesController;
