@@ -171,7 +171,7 @@ export const FilesController = {
             type: '$type',
             isPublic: '$isPublic',
             parentId: {
-              $cond: { if: { $eq: ['$parentId', '0'] }, then: 0, else: '$parentId' },
+              $cond: { if: { $eq: ['$parentId', 0] }, then: 0, else: '$parentId' },
             },
           },
         },
@@ -198,9 +198,7 @@ export const FilesController = {
           name: '$name',
           type: '$type',
           isPublic: '$isPublic',
-          parentId: {
-            $cond: { if: { $eq: ['$parentId', '0'] }, then: 0, else: '$parentId' },
-          },
+          parentId: '$parentId',
         },
       },
     ])).toArray();
