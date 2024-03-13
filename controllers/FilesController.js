@@ -157,12 +157,16 @@ export const FilesController = {
           name: '$name',
           type: '$type',
           isPublic: '$isPublic',
+          localPath: '$localPath',
+          data: '$data',
           parentId: {
             $cond: { if: { $eq: ['$parentId', '0'] }, then: 0, else: '$parentId' },
           },
         },
       },
     ])).toArray();
+
+    console.log(files.length);
 
     return res.status(200).json(files);
   },
