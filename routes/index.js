@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { basicAuthenticate, xTokenAuthenticate } from '../middleware/auth';
 
 const AppController = require('../controllers/AppController');
 const { UsersController } = require('../controllers/UsersController');
@@ -12,12 +13,12 @@ router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
 
 router.post('/users', UsersController.postNew);
-router.get('/users/me', UsersController.getMe);
+router.get('/users/me', xTokenAuthenticate, UsersController.getMe);
 
-router.get('/connect', AuthController.getConnect);
-router.get('/disconnect', AuthController.getDisconnect);
+router.get('/connect', basicAuthenticate, AuthController.getConnect);
+router.get('/disconnect', xTokenAuthenticate, AuthController.getDisconnect);
 
-router.post('/files', FilesController.postUpload);
+router.post('/files', xTokenAuthenticate, FilesController.postUpload);
 
 export const AppRouter = router;
 export default AppRouter;

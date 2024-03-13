@@ -7,6 +7,8 @@ import { tmpdir } from 'os';
 import { v4 as uuidv4 } from 'uuid';
 import { redisClient } from '../utils/redis';
 import { dbClient } from '../utils/db';
+import { getXTokenFromHeader } from "../utils/auth";
+import { getUserIDFromRedisByToken } from "../utils/utils"
 
 const VALID_TYPES = {
   folder: 'folder',
@@ -22,17 +24,7 @@ export const FilesController = {
      * @param {Express.Response} res - The Express response object.
      */
   postUpload: async (req, res) => {
-    const token = req.headers['x-token'];
-
-    if (!token) return res.status(401).json({ error: 'Unauthorized' });
-
-    const userID = await redisClient.get(`auth_${token}`);
-
-    if (!userID) return res.status(401).json({ error: 'Unauthorized' });
-
-    const user = await dbClient.getUserById(userID);
-
-    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const { user } = req;
 
     const {
       name, type, parentId, isPublic, data,
@@ -120,6 +112,26 @@ export const FilesController = {
       parentId: parentId || 0,
     });
   },
+
+  /**
+   * Handles the GET /files/:id endpoint to retrieve the file document based on
+   * the ID
+   * 
+   * @param {Express.Request} req - The Express request object.
+   * @param {Express.Response} res - The Express response object.
+   */
+  getShow: async (req, res) => {
+    const { user } = req;
+  },
+
+  /**
+   * Handles the GET /files endpoint to retrieve all users file documents for
+   * a specific parentId
+   * 
+   * @param {Express.Request} req - The Express request object.
+   * @param {Express.Response} res - The Express response object.
+   */
+  getIndex: (req, res) => { }
 };
 
 export default FilesController;

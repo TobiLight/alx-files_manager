@@ -1,5 +1,7 @@
 import { dbClient } from '../utils/db';
 import { redisClient } from '../utils/redis';
+import { getXTokenFromHeader } from "../utils/auth";
+import { getUserIDFromRedisByToken } from "../utils/utils"
 
 export const UsersController = {
   /**
@@ -35,17 +37,7 @@ export const UsersController = {
    * @returns
    */
   async getMe(req, res) {
-    const token = req.headers['x-token'];
-
-    if (!token) return res.status(401).json({ error: 'Unauthorized' });
-
-    const userID = await redisClient.get(`auth_${token}`);
-
-    if (!userID) return res.status(401).json({ error: 'Unauthorized' });
-
-    const user = await dbClient.getUserById(userID);
-
-    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    const { user } = req;
 
     return res.status(200).json({ id: user._id, email: user.email });
   },
