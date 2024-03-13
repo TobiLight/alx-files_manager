@@ -14,8 +14,8 @@ class DBClient {
   constructor() {
     const host = process.env.DB_HOST || 'localhost';
     const port = process.env.DB_PORT || '27017';
-    this.database = process.env.DB_DATABASE || 'files_manager';
-    const url = `mongodb://${host}:${port}`;
+    const database = process.env.DB_DATABASE || 'files_manager';
+    const url = `mongodb://${host}:${port}/${database}`;
 
     this.client = new MongoClient(url, { useUnifiedTopology: true });
 
@@ -44,9 +44,9 @@ class DBClient {
   async nbUsers() {
     // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, _reject) => {
-      resolve(this.client.db(this.database).collection('users').countDocuments());
+      resolve(this.client.db().collection('users').countDocuments());
     });
-    // return this.client.db(this.database).collection('users').countDocuments();
+    // return this.client.db().collection('users').countDocuments();
   }
 
   /**
@@ -58,9 +58,9 @@ class DBClient {
   async nbFiles() {
     // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, _reject) => {
-      resolve(this.client.db(this.database).collection('files').countDocuments());
+      resolve(this.client.db().collection('files').countDocuments());
     });
-    // return this.client.db(this.database).collection('files').countDocuments();
+    // return this.client.db().collection('files').countDocuments();
   }
 
   /**
@@ -70,7 +70,7 @@ class DBClient {
    * @returns {Promise<object|null>} Returns a user
    */
   async getUserByEmail(email) {
-    const user = await this.client.db(this.database).collection('users')
+    const user = await this.client.db().collection('users')
       .findOne({ email });
 
     return user;
@@ -84,7 +84,7 @@ class DBClient {
    */
   async getUserById(userID) {
     const _id = new ObjectID(userID);
-    const user = await this.client.db(this.database).collection('users')
+    const user = await this.client.db().collection('users')
       .findOne({ _id });
 
     return user;
@@ -113,10 +113,24 @@ class DBClient {
    * @returns {Promise<object>} - The created user
    */
   async createUser(email, password) {
-    const user = await this.client.db(this.database).collection('users')
+    const user = await this.client.db().collection('users')
       .insertOne({ email, password: hashPassword(password) });
 
     return user;
+  }
+
+  /**
+   * Asynchronously retrieves a file by its id.
+   *
+   * @param {*} fileID - ID of the file
+   *
+   * @returns {Object} The file
+   */
+  async getFileById(fileID) {
+    const file = await this.client.db().collection('files')
+      .findOne({ _id: fileID });
+
+    return file;
   }
 }
 
