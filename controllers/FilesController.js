@@ -1,4 +1,4 @@
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import {
   mkdir, writeFile,
 } from 'fs';
@@ -36,7 +36,7 @@ export const FilesController = {
     if (!data && type !== VALID_TYPES.folder) return res.status(400).json({ error: 'Missing data' });
 
     if (parentId && parentId !== 0) {
-      const parent = await dbClient.getFileById(ObjectID(parentId));
+      const parent = await dbClient.getFileById(ObjectId(parentId));
 
       if (!parent) return res.status(400).json({ error: 'Parent not found' });
 
@@ -50,8 +50,8 @@ export const FilesController = {
           type,
           isPublic: isPublic || false,
           data,
-          parentId: parentId ? new ObjectID(parentId) : 0,
-          userId: new ObjectID(user._id),
+          parentId: parentId ? new ObjectId(parentId) : 0,
+          userId: new ObjectId(user._id),
         });
 
         return res.status(201).json({
@@ -98,8 +98,8 @@ export const FilesController = {
       type,
       isPublic: isPublic || false,
       data,
-      parentId: parentId ? new ObjectID(parentId) : 0,
-      userId: new ObjectID(user._id),
+      parentId: parentId ? new ObjectId(parentId) : 0,
+      userId: new ObjectId(user._id),
       localPath,
     });
 
@@ -126,8 +126,8 @@ export const FilesController = {
     const file = await (await dbClient.getFileCollections())
       .findOne({
         _id: id === '0' ? Buffer.alloc(24, '0').toString('utf-8')
-          : ObjectID(id),
-        userId: ObjectID(user._id),
+          : ObjectId(id),
+        userId: ObjectId(user._id),
       });
 
     if (!file) return res.status(404).json({ error: 'Not found' });
@@ -158,7 +158,7 @@ export const FilesController = {
 
     if (parentId === '0' || parentId === 0) {
       const files = await (await (await dbClient.getFileCollections()).aggregate([
-        { $match: { userId: ObjectID(user._id) } },
+        { $match: { userId: ObjectId(user._id) } },
         { $sort: { _id: -1 } },
         { $skip: page * MAX_ITEMS_PER_PAGE },
         { $limit: MAX_ITEMS_PER_PAGE },
@@ -183,8 +183,8 @@ export const FilesController = {
     const files = await (await (await dbClient.getFileCollections()).aggregate([
       {
         $match: {
-          userId: ObjectID(user._id),
-          parentId: ObjectID(parentId),
+          userId: ObjectId(user._id),
+          parentId: ObjectId(parentId),
         },
       },
       { $sort: { _id: -1 } },
