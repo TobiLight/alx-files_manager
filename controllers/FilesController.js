@@ -1,11 +1,12 @@
 import { ObjectId } from 'mongodb';
 import {
-  mkdir, writeFile, existsSync, readFile,
+  mkdir, writeFile, existsSync, realpath,
 } from 'fs';
 import { join as joinPath } from 'path';
 import { tmpdir } from 'os';
 import { v4 as uuidv4 } from 'uuid';
 import { contentType } from 'mime-types';
+import { promisify } from 'util';
 import { dbClient } from '../utils/db';
 import { getXTokenFromHeader } from '../utils/auth';
 
@@ -322,20 +323,13 @@ export const FilesController = {
 
     if (!existsSync(file.localPath)) return res.status(404).json({ error: 'Not found' });
 
-    // const realpathasync = promisify(realpath);
-    // const ab = await realpathasync(file.localPath)
+    const realpathasync = promisify(realpath);
+    const fileContent = await realpathasync(file.localPath);
 
-    readFile(file.localPath, (err, data) => {
-      if (err) return res.status(400).json({ error: 'An error has occured while reading file content' });
+    const mimeType = contentType(file.name);
+    res.setHeader('Content-Type', mimeType || 'text/plain; charset=utf-8');
 
-      const mimeType = contentType(file.name);
-
-      res.setHeader('Content-Type', mimeType || 'text/plain; charset=utf-8');
-
-      const fileContent = Buffer.from(data, 'base64').toString();
-
-      return res.status(200).send(fileContent);
-    });
+    return res.status(200).send(fileContent);
   },
 };
 
