@@ -137,7 +137,8 @@ export const FilesController = {
     // start thumbnail generation worker
     if (type === VALID_TYPES.image) {
       const jobName = `Image thumbnail [${user._id.toString()}-${newFile.insertedId.toString()}]`;
-      fileQueue.add({ userId: user._id.toString(), fileId: newFile.insertedId.toString(), name: jobName });
+      fileQueue
+      .add({ userId: user._id.toString(), fileId: newFile.insertedId.toString(), name: jobName });
     }
 
     return res.status(201).json({
