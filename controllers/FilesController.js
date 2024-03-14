@@ -10,6 +10,9 @@ import { lookup } from 'mime-types';
 import { promisify } from 'util';
 import { dbClient } from '../utils/db';
 import { getXTokenFromHeader } from '../utils/auth';
+import Queue from 'bull/lib/queue';
+
+const fileQueue = new Queue('thumbnail generation');
 
 const VALID_TYPES = {
   folder: 'folder',
@@ -129,6 +132,12 @@ export const FilesController = {
       userId: new ObjectId(user._id),
       localPath,
     });
+
+    // start thumbnail generation worker
+    if (type === VALID_TYPES.image) {
+      const jobName = `Image thumbnail [${user._id.toString()}-${newFile.insertedId.toString()}]`;
+      fileQueue.add({ userId: user._id.toString(), fileId: newFile.insertedId.toString(), name: jobName });
+    }
 
     return res.status(201).json({
       id: newFile.insertedId,
