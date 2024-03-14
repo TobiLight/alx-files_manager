@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import {
   mkdir, writeFile, existsSync, realpath,
+  stat,
 } from 'fs';
 import { join as joinPath } from 'path';
 import { tmpdir } from 'os';
@@ -321,12 +322,23 @@ export const FilesController = {
 
     if (file === VALID_TYPES.folder) return res.status(400).json({ error: "A folder doesn't have content" });
 
-    if (!existsSync(file.localPath)) return res.status(404).json({ error: 'Not found' });
+    // if (!existsSync(file.localPath)) return res.status(404).json({ error: 'Not found' });
+
+    const statAsync = promisify(stat);
+
+    if (existsSync(file.localPath)) {
+      const fileInfo = await statAsync(file.localPath);
+      if (!fileInfo.isFile()) return res.status(404).json({ error: 'Not found' });
+    } else {
+      return res.status(404).json({ error: 'Not found' });
+    }
 
     const realpathasync = promisify(realpath);
+
     const fileContent = await realpathasync(file.localPath);
 
     const mimeType = lookup(file.name);
+
     res.setHeader('Content-Type', mimeType || 'text/plain; charset=utf-8');
 
     return res.status(200).sendFile(fileContent);
