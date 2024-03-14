@@ -112,6 +112,7 @@ export const FilesController = {
     const localPath = joinPath(baseDir, newFileID);
 
     const buffer = Buffer.from(data, 'base64');
+    
     writeFile(
       localPath,
       buffer,
