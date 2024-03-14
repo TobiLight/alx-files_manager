@@ -120,7 +120,7 @@ class DBClient {
   }
 
   /**
-   *
+   * Returns files collection
    */
   async getFileCollections() {
     const files = await this.client.db().collection('files');
@@ -128,7 +128,7 @@ class DBClient {
   }
 
   /**
-  *
+  * Returns users collection
   */
   async getUserCollections() {
     const users = await this.client.db().collection('users');
