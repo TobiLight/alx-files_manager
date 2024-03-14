@@ -5,7 +5,7 @@ import {
 import { join as joinPath } from 'path';
 import { tmpdir } from 'os';
 import { v4 as uuidv4 } from 'uuid';
-import { contentType } from 'mime-types';
+import { lookup } from 'mime-types';
 import { promisify } from 'util';
 import { dbClient } from '../utils/db';
 import { getXTokenFromHeader } from '../utils/auth';
@@ -317,7 +317,7 @@ export const FilesController = {
         _id: ObjectId(isValidId(id) ? id : Buffer.alloc(24, '0').toString('utf-8')),
       });
 
-    if (!file || (!file.isPublic && file.userId.toString() !== user._id.toString())) return res.status(404).json({ error: 'Not found' });
+    if (!file || (!file.isPublic && user && file.userId.toString() !== user._id.toString())) return res.status(404).json({ error: 'Not found' });
 
     if (file === VALID_TYPES.folder) return res.status(400).json({ error: "A folder doesn't have content" });
 
@@ -326,10 +326,10 @@ export const FilesController = {
     const realpathasync = promisify(realpath);
     const fileContent = await realpathasync(file.localPath);
 
-    const mimeType = contentType(file.name);
+    const mimeType = lookup(file.name);
     res.setHeader('Content-Type', mimeType || 'text/plain; charset=utf-8');
 
-    return res.status(200).send(fileContent);
+    return res.status(200).sendFile(fileContent);
   },
 };
 
