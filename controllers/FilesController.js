@@ -8,9 +8,9 @@ import { tmpdir } from 'os';
 import { v4 as uuidv4 } from 'uuid';
 import { lookup } from 'mime-types';
 import { promisify } from 'util';
+import Queue from 'bull/lib/queue';
 import { dbClient } from '../utils/db';
 import { getXTokenFromHeader } from '../utils/auth';
-import Queue from 'bull/lib/queue';
 
 const fileQueue = new Queue('thumbnail generation');
 
@@ -112,7 +112,7 @@ export const FilesController = {
     const localPath = joinPath(baseDir, newFileID);
 
     const buffer = Buffer.from(data, 'base64');
-    
+
     writeFile(
       localPath,
       buffer,
@@ -138,7 +138,7 @@ export const FilesController = {
     if (type === VALID_TYPES.image) {
       const jobName = `Image thumbnail [${user._id.toString()}-${newFile.insertedId.toString()}]`;
       fileQueue
-      .add({ userId: user._id.toString(), fileId: newFile.insertedId.toString(), name: jobName });
+        .add({ userId: user._id.toString(), fileId: newFile.insertedId.toString(), name: jobName });
     }
 
     return res.status(201).json({
