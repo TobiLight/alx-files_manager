@@ -1,11 +1,13 @@
 import { ObjectId } from 'mongodb';
 import {
-  mkdir, writeFile,
+  mkdir, writeFile, existsSync, readFile,
 } from 'fs';
 import { join as joinPath } from 'path';
 import { tmpdir } from 'os';
 import { v4 as uuidv4 } from 'uuid';
+import { contentType } from 'mime-types';
 import { dbClient } from '../utils/db';
+import { getXTokenFromHeader } from '../utils/auth';
 
 const VALID_TYPES = {
   folder: 'folder',
@@ -294,6 +296,45 @@ export const FilesController = {
       parentId: file.parentId.toString() === '0'
         ? 0
         : file.parentId.toString(),
+    });
+  },
+
+  /**
+   * Handles the GET /files/:id/data endpoint to return the content of
+   * the file document based on the ID
+   *
+   * @param {Express.Request} req - The Express request object.
+   * @param {Express.Response} res - The Express response object.
+  */
+  // eslint-disable-next-line consistent-return
+  getFile: async (req, res) => {
+    const { user } = getXTokenFromHeader(req, 'x-token');
+    const { id } = req.params;
+
+    const file = await (await dbClient.getFileCollections())
+      .findOne({
+        _id: ObjectId(isValidId(id) ? id : Buffer.alloc(24, '0').toString('utf-8')),
+      });
+
+    if (!file || (!file.isPublic && file.userId.toString() !== user._id.toString())) return res.status(404).json({ error: 'Not found' });
+
+    if (file === VALID_TYPES.folder) return res.status(400).json({ error: "A folder doesn't have content" });
+
+    if (!existsSync(file.localPath)) return res.status(404).json({ error: 'Not found' });
+
+    // const realpathasync = promisify(realpath);
+    // const ab = await realpathasync(file.localPath)
+
+    readFile(file.localPath, (err, data) => {
+      if (err) return res.status(400).json({ error: 'An error has occured while reading file content' });
+
+      const mimeType = contentType(file.name);
+
+      res.setHeader('Content-Type', mimeType || 'text/plain; charset=utf-8');
+
+      const fileContent = Buffer.from(data, 'base64').toString();
+
+      return res.status(200).send(fileContent);
     });
   },
 };
